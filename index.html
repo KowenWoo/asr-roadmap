@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASR & Computational Linguistics Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #171717;
+    --surface2: #1f1f1f;
+    --border: #2a2a2a;
+    --border-hover: #3a3a3a;
+    --text: #e8e6e0;
+    --text-muted: #888;
+    --text-dim: #555;
+    --accent-classical: #4a9eff;
+    --accent-hybrid: #52c97a;
+    --accent-e2e: #b87fff;
+    --accent-ssl: #ffaa44;
+    --accent-indigenous: #ff7a6b;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .header-left h1 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 400;
+    font-style: italic;
+    letter-spacing: -0.3px;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .header-left p {
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .04em;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .search-wrap {
+    position: relative;
+  }
+
+  .search-wrap input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 12px 7px 32px;
+    width: 200px;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .search-wrap input::placeholder { color: var(--text-dim); }
+  .search-wrap input:focus { border-color: var(--border-hover); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  .topic-count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    height: calc(100vh - 89px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .era-section { border-bottom: 1px solid var(--border); }
+
+  .era-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 1;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .era-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .topic-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 11px 16px;
+    cursor: pointer;
+    transition: background .1s;
+    position: relative;
+  }
+
+  .topic-btn:last-child { border-bottom: none; }
+  .topic-btn:hover { background: var(--surface); }
+
+  .topic-btn.active {
+    background: var(--surface2);
+  }
+
+  .topic-btn.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    border-radius: 0 1px 1px 0;
+  }
+
+  .topic-btn.hidden { display: none; }
+
+  .btn-title {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .btn-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+  }
+
+  .btn-year {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .btn-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    letter-spacing: .03em;
+  }
+
+  /* ── Detail panel ── */
+  .detail {
+    overflow-y: auto;
+    padding: 36px 44px;
+  }
+
+  .detail::-webkit-scrollbar { width: 4px; }
+  .detail::-webkit-scrollbar-track { background: transparent; }
+  .detail::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-dim);
+  }
+
+  .empty-state .em-icon {
+    font-size: 32px;
+    opacity: .4;
+  }
+
+  .empty-state p {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .04em;
+  }
+
+  .detail-content { max-width: 680px; }
+
+  .detail-era {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .detail-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+
+  .detail-year {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 24px;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    margin-top: 28px;
+  }
+
+  .detail-desc {
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    margin-bottom: 0;
+  }
+
+  .lineage-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+
+  .resources-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .resource-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color .15s;
+  }
+
+  .resource-item:hover { border-color: var(--border-hover); }
+
+  .resource-type {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--surface2);
+    color: var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .resource-title {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .resource-author {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .notes-area {
+    width: 100%;
+    min-height: 120px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.65;
+    resize: vertical;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  .notes-area::placeholder { color: var(--text-dim); }
+  .notes-area:focus { border-color: var(--border-hover); }
+
+  .notes-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+
+  .notes-hint {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .save-btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 5px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color .15s, color .15s;
+  }
+
+  .save-btn:hover { border-color: var(--border-hover); color: var(--text); }
+  .save-btn.saved { color: var(--accent-ssl); border-color: var(--accent-ssl); }
+
+  .divider-line {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+
+  /* ── Era color mapping ── */
+  [data-era="classical"] .era-dot,
+  [data-era="classical"].topic-btn.active::before { background: var(--accent-classical); }
+  [data-era="classical"] .detail-era,
+  [data-era="classical"] .section-label { color: var(--accent-classical); }
+
+  [data-era="hybrid"] .era-dot,
+  [data-era="hybrid"].topic-btn.active::before { background: var(--accent-hybrid); }
+  [data-era="hybrid"] .detail-era,
+  [data-era="hybrid"] .section-label { color: var(--accent-hybrid); }
+
+  [data-era="e2e"] .era-dot,
+  [data-era="e2e"].topic-btn.active::before { background: var(--accent-e2e); }
+  [data-era="e2e"] .detail-era,
+  [data-era="e2e"] .section-label { color: var(--accent-e2e); }
+
+  [data-era="ssl"] .era-dot,
+  [data-era="ssl"].topic-btn.active::before { background: var(--accent-ssl); }
+  [data-era="ssl"] .detail-era,
+  [data-era="ssl"] .section-label { color: var(--accent-ssl); }
+
+  [data-era="indigenous"] .era-dot,
+  [data-era="indigenous"].topic-btn.active::before { background: var(--accent-indigenous); }
+  [data-era="indigenous"] .detail-era,
+  [data-era="indigenous"] .section-label { color: var(--accent-indigenous); }
+
+  /* Era label accent colors */
+  .era-section[data-era="classical"] .era-label { color: var(--accent-classical); opacity: .8; }
+  .era-section[data-era="hybrid"] .era-label { color: var(--accent-hybrid); opacity: .8; }
+  .era-section[data-era="e2e"] .era-label { color: var(--accent-e2e); opacity: .8; }
+  .era-section[data-era="ssl"] .era-label { color: var(--accent-ssl); opacity: .8; }
+  .era-section[data-era="indigenous"] .era-label { color: var(--accent-indigenous); opacity: .8; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
+    .sidebar { height: 280px; border-right: none; border-bottom: 1px solid var(--border); }
+    .detail { padding: 24px 20px; }
+    header { padding: 20px; }
+    .header-left h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>ASR &amp; Computational Linguistics</h1>
+    <p>personal study roadmap · updated as I learn</p>
+  </div>
+  <div class="header-right">
+    <div class="search-wrap">
+      <span class="search-icon">⌕</span>
+      <input type="text" id="search" placeholder="search topics..." autocomplete="off">
+    </div>
+    <span class="topic-count" id="count"></span>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar"></nav>
+  <main class="detail" id="detail">
+    <div class="empty-state">
+      <div class="em-icon">◈</div>
+      <p>select a topic to begin</p>
+    </div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+//  ROADMAP DATA
+//  To add a topic: copy any entry below, give it a unique id, and add it
+//  to the correct era array. To add a resource, add an object to the
+//  topic's resources array with { type, title, author, url }.
+//  Personal notes are saved automatically to localStorage per-topic.
+// ═══════════════════════════════════════════════════════════════════════
+
+const ERAS = [
+  {
+    id: "classical",
+    label: "Era 1 · Classical foundations · 1950s–1990s",
+  },
+  {
+    id: "hybrid",
+    label: "Era 2 · Hybrid neural-statistical · 2000s–2014",
+  },
+  {
+    id: "e2e",
+    label: "Era 3 · End-to-end neural · 2015–2019",
+  },
+  {
+    id: "ssl",
+    label: "Era 4 · Self-supervised & multilingual · 2019–present",
+  },
+  {
+    id: "indigenous",
+    label: "Indigenous language thread · cross-cutting",
+  },
+];
+
+const TOPICS = [
+
+  // ── Era 1: Classical ──────────────────────────────────────────────────
+  {
+    id: "phonetics",
+    era: "classical",
+    title: "Phonetics & phonology",
+    year: "1940s–",
+    tags: ["foundations", "linguistics"],
+    desc: `The study of speech sounds (phones) and how they function as meaning-distinguishing units (phonemes) within language systems. Defines the basic units that all downstream ASR must model — phones, allophones, syllables, stress, tone. The International Phonetic Alphabet (IPA) provides the universal notation system.\n\nPhonology distinguishes between phonetics (physical sound properties) and phonology (how sounds function within a language's system). This distinction matters for ASR: we need models that capture both the acoustic signal and the abstract functional units.`,
+    lineage: "Foundation for all ASR unit design. Phoneme inventories define HMM state spaces; phone sets are still used in modern CTC and attention models. Indigenous language phonology is often radically different from Indo-European assumptions baked into standard toolkits.",
+    resources: [
+      { type: "book", title: "Phonetics: The Science of Speech", author: "Davenport & Hannahs", url: "" },
+      { type: "course", title: "MIT OpenCourseWare: Phonology I", author: "MIT", url: "https://ocw.mit.edu" },
+    ]
+  },
+  {
+    id: "mfcc",
+    era: "classical",
+    title: "MFCC features",
+    year: "1970s–",
+    tags: ["features", "signal processing"],
+    desc: `Mel-Frequency Cepstral Coefficients transform raw audio into perceptually-motivated spectral features. The mel scale compresses high frequencies to match human auditory resolution. A filterbank of triangular filters is applied to the power spectrum, then a DCT decorrelates the filterbank outputs into compact, uncorrelated coefficients.\n\nTypically 13 MFCCs are computed, then augmented with delta and delta-delta coefficients (capturing the rate of change over time) to give a 39-dimensional feature vector per frame. These became the standard input to GMM-HMM systems for decades.`,
+    lineage: "Still used as input features in many hybrid systems. wav2vec 2.0 and HuBERT learn analogous representations directly from raw waveforms, but the mel filterbank intuition persists in their CNN feature extractors. HuBERT even uses k-means on MFCCs to generate initial pseudo-labels.",
+    resources: [
+      { type: "paper", title: "Comparative Evaluation of Various MFCC Implementations", author: "Zheng et al., 2001", url: "" },
+    ]
+  },
+  {
+    id: "hmm",
+    era: "classical",
+    title: "Hidden Markov Models",
+    year: "1970s–",
+    tags: ["alignment", "sequence modeling"],
+    desc: `HMMs model speech as a sequence of latent phoneme states with probabilistic transitions and acoustic emissions. Each phoneme is typically modeled with 3–5 HMM states capturing onset, steady-state, and offset. The Baum-Welch (EM) algorithm estimates parameters from unlabeled data; the Viterbi algorithm decodes the most likely state sequence.\n\nThe core assumption is conditional independence: given the current state, the observation is independent of past states and observations. This Markov assumption is a simplification but enables tractable inference via dynamic programming.`,
+    lineage: "MFA is still HMM-based under the hood. The concept of a latent state sequence over time directly inspired recurrent neural networks — both model temporal dependencies in sequences. Viterbi decoding resurfaces in CTC beam search. The emission probability model (GMM) was later replaced by DNNs.",
+    resources: [
+      { type: "tutorial", title: "A Tutorial on HMMs and Selected Applications in Speech", author: "Rabiner, 1989", url: "https://www.cs.ubc.ca/~murphyk/Bayes/rabiner.pdf" },
+    ]
+  },
+  {
+    id: "gmm",
+    era: "classical",
+    title: "GMM acoustic models",
+    year: "1980s–",
+    tags: ["acoustic model", "statistics"],
+    desc: `Gaussian Mixture Models serve as the emission probability model within HMM-ASR — given a phoneme state, the GMM models the distribution over MFCC feature vectors as a weighted sum of Gaussians. More Gaussians = more expressive but more parameters to estimate.\n\nContext-dependent phone models (triphones) condition each phone's GMM on its left and right context, dramatically increasing model expressivity. Decision tree clustering (tied triphones) shares parameters across rare triphone contexts. This was the dominant approach until ~2012.`,
+    lineage: "Replaced by DNNs in the hybrid era, but the decomposition into acoustic model + language model + decoder persists through all subsequent eras. The triphone context window is analogous to convolution's receptive field.",
+    resources: []
+  },
+  {
+    id: "ngram",
+    era: "classical",
+    title: "N-gram language models",
+    year: "1980s–",
+    tags: ["language model", "statistics"],
+    desc: `Statistical LMs estimate the probability of a word sequence from training corpus counts. Bigram/trigram models condition on the previous 1–2 words. Smoothing techniques (Kneser-Ney, Good-Turing, Witten-Bell) redistribute probability mass to unseen n-grams.\n\nIn the classic ASR decoding equation, the system maximizes P(W|O) ∝ P(O|W)·P(W) — acoustic model likelihood times language model prior. The LM provides the prior over word sequences, biasing the decoder toward linguistically plausible outputs.`,
+    lineage: "Neural LMs (RNNs, Transformers) learn the same conditional distributions with far more context and no fixed window. The modular acoustic+LM combination from this era is preserved in modern systems via shallow/deep fusion.",
+    resources: []
+  },
+  {
+    id: "forced-align",
+    era: "classical",
+    title: "Forced alignment & MFA",
+    year: "1990s / 2017",
+    tags: ["alignment", "data prep"],
+    desc: `Given paired audio + transcript, forced alignment uses the Viterbi algorithm to find the most likely phone-level time boundaries under a trained HMM-GMM model. The Montreal Forced Aligner (MFA, McAuliffe et al., 2017) automates this pipeline — train a GMM-HMM, then Viterbi-decode the forced alignment.\n\nMFA is widely used for: TTS duration targets (FastSpeech2), phonetic research corpora, and low-resource ASR data prep. It can train alignment models on limited data and still produce useful alignments, as noted in the FastSpeech2 paper.`,
+    lineage: "Directly uses classical HMM/GMM machinery. Provides the ground-truth supervision that attention-based TTS tries to learn implicitly and CTC tries to learn probabilistically. Relevant to Indigenous language work: MFA can bootstrap alignments even with small datasets.",
+    resources: [
+      { type: "paper", title: "Montreal Forced Aligner", author: "McAuliffe et al., 2017", url: "https://aclanthology.org/W17-1108.pdf" },
+      { type: "docs", title: "MFA Documentation", author: "Montreal Forced Aligner", url: "https://montreal-forced-aligner.readthedocs.io" },
+    ]
+  },
+  {
+    id: "wfst",
+    era: "classical",
+    title: "WFST decoding",
+    year: "1997–",
+    tags: ["decoding", "search"],
+    desc: `Weighted Finite-State Transducers compose pronunciation lexicons, acoustic models, and language models into a single unified decoding graph (the HCLG graph in Kaldi). This enables efficient beam-search decoding over the combined search space.\n\nThe four components composed together: H (HMM topology), C (context-dependency), L (lexicon), G (grammar/LM). Each is a WFST; their composition is also a WFST. Kaldi, the dominant classical ASR toolkit, is built entirely around WFST operations.`,
+    lineage: "The compositional modularity of WFSTs inspired the modular design thinking in end-to-end systems. CTC decoding with an external LM is conceptually similar to WFST composition of acoustic and language models.",
+    resources: [
+      { type: "tutorial", title: "Speech Recognition with WFSTs", author: "Mohri et al., 2008", url: "" },
+    ]
+  },
+
+  // ── Era 2: Hybrid ─────────────────────────────────────────────────────
+  {
+    id: "dnn-hmm",
+    era: "hybrid",
+    title: "DNN-HMM hybrid",
+    year: "2009–2012",
+    tags: ["acoustic model", "neural"],
+    desc: `DNNs replace GMMs as the acoustic emission model while keeping the HMM structure for alignment and decoding. The DNN computes posterior probabilities P(state | features) per frame; these are converted to likelihoods by dividing by the prior P(state).\n\nThe landmark Hinton et al. (2012) paper in IEEE Signal Processing Magazine showed dramatic WER reductions on standard benchmarks. Deep architectures (4–8 layers) could learn hierarchical feature representations from raw MFCCs.`,
+    lineage: "Keeps HMM temporal structure but replaces hand-crafted GMM distributions with learned representations. Direct bridge between classical and neural eras. Showed that representation learning > feature engineering.",
+    resources: [
+      { type: "paper", title: "Deep Neural Networks for Acoustic Modeling in Speech", author: "Hinton et al., 2012", url: "" },
+    ]
+  },
+  {
+    id: "ctc",
+    era: "hybrid",
+    title: "CTC loss",
+    year: "2006 (Graves et al.)",
+    tags: ["training objective", "alignment"],
+    desc: `Connectionist Temporal Classification introduces a blank token (∅) and defines a many-to-one mapping from frame-level output sequences to label sequences. The CTC loss marginalizes over all valid monotonic alignments between input frames and output tokens using the forward-backward algorithm.\n\nKey insight: instead of requiring frame-level alignment labels (which are expensive to obtain), CTC lets the model figure out the alignment itself while being trained only on sequence-level labels. The monotonicity constraint (can't go backward) is baked into the path definition — unlike attention, it cannot skip or repeat.`,
+    lineage: "Inspired by the alignment problem in HMM-ASR. Used as an auxiliary loss in attention TTS (Tachibana et al., 2018) and your Tachibana reading. Primary training objective in wav2vec 2.0 fine-tuning phase. The forward-backward algorithm is analogous to Baum-Welch in HMMs.",
+    resources: [
+      { type: "paper", title: "Connectionist Temporal Classification", author: "Graves et al., 2006", url: "https://www.cs.toronto.edu/~graves/icml_2006.pdf" },
+      { type: "blog", title: "Sequence Modeling with CTC", author: "Hannun, Distill 2017", url: "https://distill.pub/2017/ctc/" },
+    ]
+  },
+  {
+    id: "rnn-lm",
+    era: "hybrid",
+    title: "RNN language models",
+    year: "2010–",
+    tags: ["language model", "recurrent"],
+    desc: `Recurrent networks (Elman RNNs, then LSTMs and GRUs) model sequences with a hidden state that persists across timesteps, giving theoretically unbounded context unlike n-gram fixed windows. LSTMs (Hochreiter & Schmidhuber, 1997) add gating mechanisms to control information flow, addressing the vanishing gradient problem.\n\nFor LMs: the hidden state at timestep t encodes everything seen so far, and is used to predict word_{t+1}. Perplexity is the standard evaluation metric — lower is better.`,
+    lineage: "Direct ancestor of the Transformer LM. The seq2seq encoder-decoder framework that powers attention-based ASR grows out of stacked RNN architectures. GRUs/LSTMs are still used as fast baselines in low-resource settings.",
+    resources: [
+      { type: "paper", title: "Recurrent Neural Network Based Language Model", author: "Mikolov et al., 2010", url: "" },
+    ]
+  },
+  {
+    id: "word2vec",
+    era: "hybrid",
+    title: "Word embeddings",
+    year: "2013 (Mikolov et al.)",
+    tags: ["representations", "NLP"],
+    desc: `Word2Vec learns dense vector representations of words such that semantically similar words are geometrically close. Two training objectives: Skip-gram (predict context from center word) and CBOW (predict center from context). GloVe (Pennington et al., 2014) learns embeddings from global co-occurrence statistics.\n\nThe core insight: a word's meaning is captured by the company it keeps. This distributional hypothesis underlies all subsequent representation learning.`,
+    lineage: "The concept of learning representations from context/co-occurrence directly inspired wav2vec's contrastive objective — predicting masked audio segments from context is the speech analog of predicting masked words from context.",
+    resources: [
+      { type: "paper", title: "Distributed Representations of Words (Word2Vec)", author: "Mikolov et al., 2013", url: "" },
+    ]
+  },
+
+  // ── Era 3: End-to-end ──────────────────────────────────────────────────
+  {
+    id: "seq2seq",
+    era: "e2e",
+    title: "Seq2seq with attention",
+    year: "2014–2015",
+    tags: ["attention", "encoder-decoder"],
+    desc: `Bahdanau attention (2014) lets the decoder attend to different encoder positions at each decoding step, computing a soft alignment as a weighted sum of encoder hidden states. This removed the bottleneck of compressing the entire input into a single fixed vector.\n\nListen, Attend and Spell (Chan et al., 2015) directly applied this to ASR — the first end-to-end attention-based system. The encoder is a pyramidal BiLSTM that reduces sequence length; the decoder generates characters one at a time using attention over encoder states.`,
+    lineage: "Attention replaces the HMM alignment mechanism — the soft alignment learned by LAS is analogous to what Viterbi decodes in HMM-ASR, but learned end-to-end. The attention failure modes (skipping, repeating) discussed in your Tacotron2 reading stem from the lack of a monotonicity constraint.",
+    resources: [
+      { type: "paper", title: "Neural Machine Translation by Jointly Learning to Align and Translate", author: "Bahdanau et al., 2014", url: "https://arxiv.org/abs/1409.0473" },
+      { type: "paper", title: "Listen, Attend and Spell", author: "Chan et al., 2015", url: "https://arxiv.org/abs/1508.01211" },
+    ]
+  },
+  {
+    id: "transformer",
+    era: "e2e",
+    title: "Transformer",
+    year: "2017 (Vaswani et al.)",
+    tags: ["attention", "architecture"],
+    desc: `Self-attention replaces recurrence entirely: every position attends to every other position in parallel. Multi-head attention allows the model to attend to different representation subspaces simultaneously. Positional encodings (sinusoidal or learned) inject sequence order since there's no recurrence to carry it.\n\nScales dramatically better than RNNs: O(n²) memory in sequence length but fully parallelizable across positions. The encoder-decoder architecture maps naturally to ASR and TTS. Layer normalization, residual connections, and feedforward sublayers are the other key components.`,
+    lineage: "Architectural backbone of wav2vec 2.0, HuBERT, XLSR, XEUS, Whisper. The positional embeddings in wav2vec 2.0 are convolutional (not sinusoidal) — a deliberate adaptation for dense acoustic inputs where local relative position matters more than absolute position.",
+    resources: [
+      { type: "paper", title: "Attention Is All You Need", author: "Vaswani et al., 2017", url: "https://arxiv.org/abs/1706.03762" },
+      { type: "blog", title: "The Illustrated Transformer", author: "Jay Alammar", url: "https://jalammar.github.io/illustrated-transformer/" },
+    ]
+  },
+  {
+    id: "conformer",
+    era: "e2e",
+    title: "Conformer",
+    year: "2020 (Gulati et al.)",
+    tags: ["architecture", "ASR"],
+    desc: `Combines convolution (for local acoustic patterns) with self-attention (for global context) in an interleaved architecture. Each Conformer block: feed-forward → multi-head attention → convolution → feed-forward, with residual connections. The convolution captures local phonetic detail (tongue position transitions, burst onset); attention captures long-range dependencies (coarticulation, prosody).\n\nAchieves SOTA on LibriSpeech and many other benchmarks. XEUS uses a Conformer encoder.`,
+    lineage: "The convolution component echoes the role of GMM local feature matching from classical ASR; the attention component echoes the HMM global sequence model. A principled hybrid of local and global inductive biases.",
+    resources: [
+      { type: "paper", title: "Conformer: Convolution-Augmented Transformer for ASR", author: "Gulati et al., 2020", url: "https://arxiv.org/abs/2005.08100" },
+    ]
+  },
+  {
+    id: "lm-fusion",
+    era: "e2e",
+    title: "External LM fusion",
+    year: "2015–",
+    tags: ["language model", "decoding"],
+    desc: `End-to-end models trained only on transcribed speech have limited language modelling — they only see text through the audio-transcript pairs. Shallow fusion: at beam search, add log P_LM(w) · λ to the model's log probability at each step. Deep fusion: concatenate LM hidden state with decoder hidden state.\n\nThis restores the modular acoustic+LM combination of classical ASR, letting you leverage large unpaired text corpora for the LM while keeping the acoustic model trained on (smaller) paired data.`,
+    lineage: "Reimplements the classical WFST composition in neural form. Especially important for low-resource Indigenous languages where paired audio-text is scarce but text or written resources may exist in other forms.",
+    resources: []
+  },
+
+  // ── Era 4: SSL ────────────────────────────────────────────────────────
+  {
+    id: "wav2vec2",
+    era: "ssl",
+    title: "wav2vec 2.0",
+    year: "2020 (Baevski et al.)",
+    tags: ["self-supervised", "pre-training"],
+    desc: `Learns speech representations from raw unlabeled audio via contrastive learning over quantized latent codes. Architecture: CNN feature extractor (7 temporal conv layers) → Transformer context network → quantization module (product quantization over learned codebooks).\n\nDuring pre-training, spans of latent frames are masked. The model must identify the true quantized representation of a masked frame among K distractors sampled from other timesteps. Fine-tuned with CTC on small amounts of labeled data. With 10 minutes of labeled speech, approaches supervised baselines trained on 100x more data.`,
+    lineage: "Contrastive objective inspired by word2vec's co-occurrence idea applied to audio. Transformer from 2017. CTC for fine-tuning from 2006. Convolutional positional embeddings deliberately designed for dense acoustic frames.",
+    resources: [
+      { type: "paper", title: "wav2vec 2.0: A Framework for Self-Supervised Learning of Speech", author: "Baevski et al., 2020", url: "https://arxiv.org/abs/2006.11477" },
+      { type: "blog", title: "Illustrated wav2vec 2.0", author: "Jonathan Bgn", url: "https://jonathanbgn.com/2021/09/30/illustrated-wav2vec-2.html" },
+    ]
+  },
+  {
+    id: "hubert",
+    era: "ssl",
+    title: "HuBERT",
+    year: "2021 (Hsu et al.)",
+    tags: ["self-supervised", "masked prediction"],
+    desc: `Hidden-Unit BERT applies BERT-style masked prediction to speech. Key innovation: offline clustering (k-means on MFCCs or previous HuBERT features) generates pseudo-labels for audio frames. The model learns to predict cluster assignments for masked frames — a classification objective that's cleaner than wav2vec's contrastive loss.\n\nIterative refinement: HuBERT features from one iteration are used as input to the next k-means clustering, improving cluster quality. Avoids the need for an explicit quantization module.`,
+    lineage: "Directly analogous to BERT's masked language modelling applied to speech. The k-means clustering echoes GMM clustering in classical acoustics. Often outperforms wav2vec 2.0 on downstream tasks.",
+    resources: [
+      { type: "paper", title: "HuBERT: Self-Supervised Speech Representation Learning by Masked Prediction", author: "Hsu et al., 2021", url: "https://arxiv.org/abs/2106.07447" },
+    ]
+  },
+  {
+    id: "xlsr",
+    era: "ssl",
+    title: "XLSR / mXLS-R",
+    year: "2020–2021",
+    tags: ["multilingual", "cross-lingual"],
+    desc: `Cross-lingual Self-Supervised Representations extend wav2vec 2.0 training to multilingual corpora. XLSR-53 covers 53 languages; mXLS-R scales to 128 languages with 436M–1B parameter models.\n\nShared phonetic representations emerge across languages — the model discovers cross-lingual units. Fine-tuning on as few as 10 minutes of labeled data in a new language achieves competitive WER, leveraging cross-lingual transfer from typologically related languages in pre-training.`,
+    lineage: "wav2vec 2.0 architecture extended multilingually. Cross-lingual transfer is analogous to transfer learning in computer vision. The multilingual pre-training directly benefits low-resource Indigenous language ASR.",
+    resources: [
+      { type: "paper", title: "Unsupervised Cross-Lingual Representation Learning for Speech", author: "Conneau et al., 2020", url: "https://arxiv.org/abs/2006.13979" },
+    ]
+  },
+  {
+    id: "whisper",
+    era: "ssl",
+    title: "Whisper",
+    year: "2022 (Radford et al., OpenAI)",
+    tags: ["weakly supervised", "multilingual"],
+    desc: `Weakly supervised seq2seq model trained on 680k hours of web audio with noisy transcripts collected from the internet. Encoder-decoder Transformer with log-mel spectrogram input. Single model handles multilingual ASR, speech translation, and language identification.\n\nKey tradeoff vs SSL: doesn't require a separate fine-tuning step (the model is directly usable), but is less data-efficient for low-resource languages — needs actual transcribed audio, not just unlabeled speech. Robust to noise and domain shift due to training data diversity.`,
+    lineage: "Classic seq2seq with attention (LAS lineage) scaled massively. No self-supervised pre-training — leverages vast weakly labeled data instead. For Indigenous languages, Whisper generally underperforms SSL fine-tuning approaches due to minimal training data.",
+    resources: [
+      { type: "paper", title: "Robust Speech Recognition via Large-Scale Weak Supervision", author: "Radford et al., 2022", url: "https://arxiv.org/abs/2212.04356" },
+    ]
+  },
+  {
+    id: "xeus",
+    era: "ssl",
+    title: "XEUS",
+    year: "2024",
+    tags: ["multilingual", "endangered languages"],
+    desc: `Extreme Universality for Encoder of Speech. Conformer-based SSL model pre-trained on 1 million+ hours across 4000+ languages, explicitly targeting the long tail of the world's languages including endangered and Indigenous ones.\n\nUses a combination of masked prediction objectives and cross-lingual self-supervised losses. Achieves SOTA on many low-resource and endangered language benchmarks. The scale of language coverage and the explicit design for underrepresented languages makes it the most directly relevant foundation model for Indigenous language ASR.`,
+    lineage: "Conformer encoder (2020). Self-supervised objectives from wav2vec 2.0/HuBERT lineage. Designed to address the gap that earlier multilingual models (XLSR, Whisper) left for the long tail of languages.",
+    resources: [
+      { type: "paper", title: "XEUS: Towards a Foundation Model for Universality in ASR", author: "Chen et al., 2024", url: "https://arxiv.org/abs/2407.04212" },
+    ]
+  },
+
+  // ── Indigenous thread ─────────────────────────────────────────────────
+  {
+    id: "ind-challenge",
+    era: "indigenous",
+    title: "Core challenges",
+    year: "Ongoing",
+    tags: ["data scarcity", "phonology", "morphology"],
+    desc: `Indigenous languages face compounding ASR challenges: extreme data scarcity (hours to tens of hours, not thousands), polysynthetic morphology (one word encodes what English expresses in a full sentence, making the vocabulary effectively infinite), complex phonology (ejectives, retroflex consonants, complex tone systems, clicks) not well represented in multilingual pre-training corpora, oral-primary traditions with no standard orthography, and speaker community constraints on data collection and sharing.\n\nThese challenges interact: scarce data means models can't learn the morphological complexity; non-standard orthography means transcription is inconsistent; community protocols limit how data can be collected.`,
+    lineage: "Each era has a different relationship to these challenges. Classical systems need large hand-crafted lexicons and transcribed corpora. Neural systems need paired audio-text at scale. SSL reduces labeled data needs but pre-training corpora still underrepresent Indigenous languages — XEUS is the most explicit attempt to address this.",
+    resources: [
+      { type: "paper", title: "Endangered Language Documentation with ASR", author: "Various", url: "" },
+    ]
+  },
+  {
+    id: "ind-sovereignty",
+    era: "indigenous",
+    title: "Data sovereignty & OCAP",
+    year: "Ongoing",
+    tags: ["ethics", "community", "governance"],
+    desc: `The First Nations Information Governance Centre's OCAP principles (Ownership, Control, Access, Possession) assert that Indigenous communities own their data and have the right to control how it is collected, used, and shared. The CARE principles (Collective Benefit, Authority to Control, Responsibility, Ethics) provide complementary governance frameworks.\n\nLanguage recordings may be sacred, gendered, or restricted by cultural protocol. Standard ML data practices — upload to centralized servers, publish models publicly, treat data as a commodity — can directly violate these principles. This isn't just an ethical concern; it shapes the technical infrastructure that's appropriate to deploy.`,
+    lineage: "Federated learning and on-device training are potential technical responses that keep data on community infrastructure. The deeper issue is that community consent and benefit-sharing must be built into research design from the start — not retrofitted after the fact.",
+    resources: [
+      { type: "resource", title: "FNIGC OCAP Principles", author: "First Nations Information Governance Centre", url: "https://fnigc.ca/ocap-training/" },
+      { type: "paper", title: "CARE Principles for Indigenous Data Governance", author: "Carroll et al., 2020", url: "https://doi.org/10.5334/dsj-2020-043" },
+    ]
+  },
+  {
+    id: "ind-lowresource",
+    era: "indigenous",
+    title: "Low-resource adaptation",
+    year: "2019–",
+    tags: ["transfer learning", "few-shot"],
+    desc: `The dominant current approach: take a multilingual SSL pre-trained model (XLSR, mXLS-R, XEUS) and fine-tune on a small labeled set from the target language. This leverages cross-lingual phonetic transfer — the model has seen thousands of hours of diverse phonetics and can adapt to new phoneme inventories quickly.\n\nComplementary strategies: active learning to maximize annotation efficiency, meta-learning (MAML) for fast adaptation, data augmentation (speed perturbation, SpecAugment), and LM fusion with any available text resources. Cross-lingual transfer is most effective when the pre-training includes phonologically similar languages.`,
+    lineage: "XLSR and XEUS were partly motivated by endangered and Indigenous language needs. Fine-tuning wav2vec 2.0 on 10 minutes of a new language has shown surprisingly competitive results — this is the practical entry point for Indigenous language ASR work.",
+    resources: [
+      { type: "paper", title: "Towards Zero-Shot Cross-Lingual Transfer for ASR", author: "Sanabria et al.", url: "" },
+    ]
+  },
+  {
+    id: "ind-morphology",
+    era: "indigenous",
+    title: "Polysynthetic morphology",
+    year: "Ongoing",
+    tags: ["morphology", "tokenization"],
+    desc: `Languages like Cree, Inuktitut, Ojibwe, and Yupik are polysynthetic — a single word encodes argument structure, aspect, evidentiality, and more, resulting in a vocabulary that's effectively unbounded. Standard word-level LMs and pronunciation lexicons fail completely.\n\nApproaches: subword tokenization (BPE, SentencePiece, Unigram LM) learns morpheme-like units from data without explicit morphological analysis. FST-based morphological analyzers inject linguistic knowledge directly. Character-level models avoid the lexicon problem entirely but lose morpheme identity. The right granularity is language-specific.`,
+    lineage: "Classical ASR assumed a finite closed lexicon — completely unsuitable. BPE (2016, originally for NMT) partially addresses this. End-to-end character/grapheme models are more principled. Morpheme-aware models require collaboration with community linguists.",
+    resources: [
+      { type: "paper", title: "Neural Morphological Segmentation for Low-Resource Settings", author: "Various", url: "" },
+    ]
+  },
+  {
+    id: "ind-community",
+    era: "indigenous",
+    title: "Community-centered design",
+    year: "Ongoing",
+    tags: ["ethics", "design", "revitalization"],
+    desc: `Language revitalization is the primary goal — not ASR benchmark performance. Technology must be useful to speakers, elders, and learners in the community. This means: transcription assistance tools that let speakers correct ASR output, pronunciation feedback for learners, voice interfaces in the language, and most importantly, community control over how models are deployed and updated.\n\nIndigenous AI principles — reciprocity, relationality, community benefit — provide an evaluation framework that challenges standard ML metrics. A model that achieves 30% WER but is owned and controlled by the community may be more valuable than a 5% WER model hosted on an external server.`,
+    lineage: "Connects the technical roadmap to Indigenous AI ethics frameworks. Concepts like reciprocity in multi-agent RL (your work at MILA) and data sovereignty create direct bridges between ML theory and Indigenous governance principles.",
+    resources: [
+      { type: "resource", title: "Indigenous AI Position Paper", author: "Lewis et al., 2020", url: "https://www.indigenous-ai.net/position-paper" },
+    ]
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════════
+//  APP LOGIC — you don't need to edit below this line
+// ═══════════════════════════════════════════════════════════════════════
+
+const ERA_META = Object.fromEntries(ERAS.map(e => [e.id, e]));
+let activeId = null;
+
+function getAccent(era) {
+  const map = {
+    classical: 'var(--accent-classical)',
+    hybrid: 'var(--accent-hybrid)',
+    e2e: 'var(--accent-e2e)',
+    ssl: 'var(--accent-ssl)',
+    indigenous: 'var(--accent-indigenous)',
+  };
+  return map[era] || 'var(--text-muted)';
+}
+
+function getEraName(era) {
+  const names = {
+    classical: 'Era 1 · Classical',
+    hybrid: 'Era 2 · Hybrid',
+    e2e: 'Era 3 · End-to-end',
+    ssl: 'Era 4 · Self-supervised',
+    indigenous: 'Indigenous thread',
+  };
+  return names[era] || era;
+}
+
+function buildSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.innerHTML = '';
+  ERAS.forEach(era => {
+    const section = document.createElement('div');
+    section.className = 'era-section';
+    section.dataset.era = era.id;
+
+    const label = document.createElement('div');
+    label.className = 'era-label';
+    label.innerHTML = `<span class="era-dot"></span>${era.label}`;
+    section.appendChild(label);
+
+    TOPICS.filter(t => t.era === era.id).forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'topic-btn';
+      btn.dataset.era = t.era;
+      btn.dataset.id = t.id;
+      btn.innerHTML = `
+        <div class="btn-title">${t.title}</div>
+        <div class="btn-meta">
+          <span class="btn-year">${t.year}</span>
+          <div class="btn-tags">${(t.tags||[]).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+        </div>`;
+      btn.addEventListener('click', () => selectTopic(t.id));
+      section.appendChild(btn);
+    });
+
+    sidebar.appendChild(section);
+  });
+  updateCount(TOPICS.length);
+}
+
+function selectTopic(id) {
+  const topic = TOPICS.find(t => t.id === id);
+  if (!topic) return;
+  activeId = id;
+
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.toggle('active', b.dataset.id === id));
+
+  const notes = localStorage.getItem('notes_' + id) || '';
+  const accent = getAccent(topic.era);
+
+  document.getElementById('detail').innerHTML = `
+    <div class="detail-content" data-era="${topic.era}">
+      <div class="detail-era">
+        <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${accent};"></span>
+        ${getEraName(topic.era)}
+      </div>
+      <div class="detail-title">${topic.title}</div>
+      <div class="detail-year">${topic.year}</div>
+
+      <div class="section-label" data-era="${topic.era}">Overview</div>
+      <div class="detail-desc">${topic.desc.replace(/\n\n/g, '<br><br>')}</div>
+
+      <div class="divider-line"></div>
+
+      <div class="section-label" data-era="${topic.era}">Lineage & connections</div>
+      <div class="lineage-box">${topic.lineage}</div>
+
+      ${topic.resources && topic.resources.length > 0 ? `
+        <div class="section-label" data-era="${topic.era}" style="margin-top:28px;">Resources</div>
+        <div class="resources-list">
+          ${topic.resources.map(r => `
+            <${r.url ? `a href="${r.url}" target="_blank" rel="noopener"` : 'div'} class="resource-item">
+              <span class="resource-type">${r.type}</span>
+              <div>
+                <div class="resource-title">${r.title}</div>
+                ${r.author ? `<div class="resource-author">${r.author}</div>` : ''}
+              </div>
+            </${r.url ? 'a' : 'div'}>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <div class="section-label" data-era="${topic.era}" style="margin-top:28px;">My notes</div>
+      <textarea class="notes-area" id="notes-${id}" placeholder="Add your own notes, questions, links as you learn...">${notes}</textarea>
+      <div class="notes-footer">
+        <span class="notes-hint">saved locally in browser</span>
+        <button class="save-btn" id="save-btn" onclick="saveNotes('${id}')">save</button>
+      </div>
+    </div>`;
+
+  // Apply era colors to dynamically created section labels
+  document.querySelectorAll(`[data-era="${topic.era}"].section-label`).forEach(el => {
+    el.style.color = accent;
+  });
+  document.querySelector('.detail-era').style.color = accent;
+
+  // Auto-save on input
+  const ta = document.getElementById('notes-' + id);
+  if (ta) {
+    ta.addEventListener('input', () => {
+      const btn = document.getElementById('save-btn');
+      if (btn) btn.classList.remove('saved');
+    });
+  }
+}
+
+function saveNotes(id) {
+  const ta = document.getElementById('notes-' + id);
+  if (ta) {
+    localStorage.setItem('notes_' + id, ta.value);
+    const btn = document.getElementById('save-btn');
+    if (btn) {
+      btn.textContent = 'saved ✓';
+      btn.classList.add('saved');
+      setTimeout(() => { btn.textContent = 'save'; btn.classList.remove('saved'); }, 1800);
+    }
+  }
+}
+
+function updateCount(n) {
+  document.getElementById('count').textContent = n + ' topics';
+}
+
+function initSearch() {
+  document.getElementById('search').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase().trim();
+    let visible = 0;
+    document.querySelectorAll('.topic-btn').forEach(btn => {
+      const id = btn.dataset.id;
+      const topic = TOPICS.find(t => t.id === id);
+      const match = !q ||
+        topic.title.toLowerCase().includes(q) ||
+        (topic.tags || []).some(tag => tag.includes(q)) ||
+        topic.desc.toLowerCase().includes(q) ||
+        topic.year.toLowerCase().includes(q);
+      btn.classList.toggle('hidden', !match);
+      if (match) visible++;
+    });
+    updateCount(visible);
+  });
+}
+
+buildSidebar();
+initSearch();
+</script>
+</body>
+</html>
